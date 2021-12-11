@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.newlecture.web.entity.Notice;
+
 @WebServlet("/notice/detail")
 public class NoticeDetailController extends HttpServlet {
 	@Override
@@ -41,11 +43,25 @@ public class NoticeDetailController extends HttpServlet {
 			//쿼리 결과를 변수에 저장하기
 			String title = rs.getString("TITLE");
 			Date regdate = rs.getDate("REGDATE");
-			String writerId = rs.getString("WRITER_ID");
+			String  writerId = rs.getString("WRITER_ID");
 			String hit = rs.getString("HIT");
 			String files = rs.getString("FILES");
-			String content = rs.getString("CONTENT");  
+			String content = rs.getString("CONTENT");
+			
+			Notice notice = new Notice(
+					id, 
+					title, 
+					regdate, 
+					writerId, 
+					hit, 
+					files, 
+					content
+					);
+					
+			
+			request.setAttribute("n", notice);
 
+			/*
 			//request에 데이터 심기
 			request.setAttribute("title", title);
 			request.setAttribute("regdate", regdate);
@@ -53,7 +69,8 @@ public class NoticeDetailController extends HttpServlet {
 			request.setAttribute("hit", hit);
 			request.setAttribute("files", files);
 			request.setAttribute("content", content);
-			
+			*/
+
 			rs.close();
 			st.close();
 			con.close();
