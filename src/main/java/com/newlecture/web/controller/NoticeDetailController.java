@@ -84,7 +84,7 @@ public class NoticeDetailController extends HttpServlet {
 		
 		
 		
-		request.getRequestDispatcher("/notice/detail.jsp")
+		request.getRequestDispatcher("/WEB-INF/view/notice/detail.jsp")
 		.forward(request, response); //데이터를 가지고 이어서 작성
 	}
 }
