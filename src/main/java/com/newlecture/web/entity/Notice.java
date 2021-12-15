@@ -10,7 +10,9 @@ public class Notice {
 	private String hit;
 	private String files;
 	private String content;
-
+	public Notice() {
+		// TODO Auto-generated constructor stub
+	}
 	public Notice(int id, String title, Date regdate, String writerId, String hit, String files, String content) {
 		this.id = id;
 		this.title = title;

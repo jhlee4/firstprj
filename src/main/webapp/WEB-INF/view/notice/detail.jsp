@@ -170,7 +170,7 @@
 								<tr>
 									<th>첨부파일</th>
 									<td colspan="3" style="text-align:left; text-indent: 10px;" >
-									<c:forTokens var="fileName" items="${ n.files}" delims="," varStatus="st">
+									<c:forTokens var="fileName" items="${n.files}" delims="," varStatus="st">
 										
 										<c:set var="style" value="font-weight: bold; color:red;"/>
 										<c:if test="${fn:endsWith(fileName, '.zip' )}">

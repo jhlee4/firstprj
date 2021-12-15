@@ -4,6 +4,7 @@
     pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
 <!DOCTYPE html>
 <html>
@@ -154,11 +155,11 @@
 						<legend class="hidden">공지사항 검색 필드</legend>
 						<label class="hidden">검색분류</label>
 						<select name="f">
-							<option  value="title">제목</option>
-							<option  value="writerId">작성자</option>
+							<option ${(param.f == "title")?"selected":""} value="title">제목</option>
+							<option ${(param.f == "writer_id")?"selected":""} value="writer_id">작성자</option>
 						</select> 
 						<label class="hidden">검색어</label>
-						<input type="text" name="q" value=""/>
+						<input type="text" name="q" value="${param.q}"/>
 						<input class="btn btn-search" type="submit" value="검색" />
 					</fieldset>
 				</form>
@@ -184,6 +185,10 @@
 						pageContext.setAttribute("n", n);
 					%>
 					 --%>
+			 		<c:set var="page" value="${(empty param.p)? 1: param.p}" />
+					<c:set var="startNum" value="${page-(page-1)%5}" />
+					<c:set var="lastNum" value="${fn:substringBefore(Math.ceil(count/10), '.')}" />
+					
 					 <c:forEach var="n" items="${list}" begin="0" end="9" varStatus="st">
 					<tr>
 						<td>${n.id}</td>
@@ -199,22 +204,20 @@
 			
 			<div class="indexer margin-top align-right">
 				<h3 class="hidden">현재 페이지</h3>
-				<div><span class="text-orange text-strong">1</span> / 1 pages</div>
+				<div><span class="text-orange text-strong">${(empty param.p)?1:param.p}</span> / ${lastNum}</div>
 			</div>
 
 			<div class="margin-top align-center pager">	
 		
 	<div>
 	
-	<c:set var="page" value="${(param.p ==null)? 1: param.p}" />
-	<c:set var="startNum" value="${page-(page-1)%5}" />
-	<c:set var="lastNum" value="13" />
+
 		
 	<c:if test="${startNum <= 1}">
 	<span class="btn btn-prev" onclick="alert('이전 페이지가 없습니다.');">이전</span>
 	</c:if>
 	<c:if test="${startNum > 1 }">
-	<a class="btn btn-prev" href="?p=${startNum-5}&t=&q=">이전</a>
+	<a class="btn btn-prev" href="?p=${startNum-5}&f=&q=${param.q}">이전</a>
 	</c:if>
 	
 	</div>
@@ -223,7 +226,9 @@
 	
 	<ul class="-list- center">
 		<c:forEach var="i" begin="0" end="4">
-		<li><a class="-text- orange bold" href="?p=${startNum+i}&t=&q=" >${startNum+i}</a></li>
+		<c:if test="${(startNum+i)<=lastNum}">
+		<li><a class="-text- ${page==(startNum+i)?'orange':'' } bold" href="?p=${startNum+i}&f=${param.f}&q=${param.q}" >${startNum+i}</a></li>
+		</c:if>
 		</c:forEach>		
 	</ul>
 	<div>
@@ -232,7 +237,7 @@
 	<span class="btn btn-next" onclick="alert('다음 페이지가 없습니다.');">다음</span>
 	</c:if>
 	<c:if test="${startNum+5 <= lastNum }">
-	<a class="btn btn-next" href="?p=${startNum+5}&t=&q=">다음</a>
+	<a class="btn btn-next" href="?p=${startNum+5}&f=&q=${param.q}">다음</a>
 	</c:if>
 	
 	</div>
