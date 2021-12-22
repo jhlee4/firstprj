@@ -34,7 +34,7 @@
             <!-- ---------------------------<header>--------------------------------------- -->
 
             <h1 id="logo">
-                <a href="/index.html">
+                <a href="/index">
                     <img src="/images/logo.png" alt="뉴렉처 온라인" />
 
                 </a>
@@ -202,7 +202,12 @@
 								
 								<tr>
 									<th>다음글</th>
+									<c:if test="${empty nextN }">
 									<td colspan="3"  class="text-align-left text-indent">다음글이 없습니다.</td>
+									</c:if>
+									<c:if test="${!(empty nextN) }">
+									<td colspan="3"  class="text-align-left text-indent"><a class="text-blue text-strong" href="detail?id=${nextN.id}">${nextN.title}</a></td>
+									</c:if>
 								</tr>
 								
 									
@@ -210,7 +215,9 @@
 								
 								<tr>
 									<th>이전글</th>
-									<td colspan="3"  class="text-align-left text-indent"><a class="text-blue text-strong" href="">스프링 DI 예제 코드</a></td>
+									<td colspan="3"  class="text-align-left text-indent">이전글이 없습니다.</td>
+									
+									
 								</tr>
 								
 								

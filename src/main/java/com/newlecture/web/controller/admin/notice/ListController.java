@@ -1,4 +1,4 @@
-package com.newlecture.web.controller;
+package com.newlecture.web.controller.admin.notice;
 
 import java.io.IOException;
 import java.util.List;
@@ -12,18 +12,45 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.newlecture.web.entity.Notice;
+import com.newlecture.web.entity.NoticeView;
 import com.newlecture.web.service.NoticeService;
 
 
-@WebServlet("/notice/list")
-public class NoticeListController extends HttpServlet{
+@WebServlet("/admin/board/notice/list")
+public class ListController extends HttpServlet{
+	// 404 url 없는 경우
+	// 405 url은 있는데 처리하는 코드 없는 경우
+	// 403 보안오류
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String[] openIds = request.getParameterValues("open-id");
+		String[] delIds = request.getParameterValues("del-id");
+		String cmd = request.getParameter("cmd");
+		
+		switch(cmd) {
+		case "일괄공개":
+			for(String openId : openIds)
+				System.out.printf("open id : %s\n", openId);
+			break;
+			
+		case "일괄삭제":
+			NoticeService service = new NoticeService();
+			int[] ids = new int[delIds.length];
+			for(int i=0;i<delIds.length ; i++)
+				ids[i] = Integer.parseInt(delIds[i]);
+			
+			int result = service.deleteNoticeAll(ids);
+			break;
+		}
+		
+		response.sendRedirect("list");
+	}
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		String field_ = request.getParameter("f");
 		String query_ = request.getParameter("q");
 		String page_ = request.getParameter("p");
-		
 		String field = "title";
 		if(field_ != null && !field_.equals(""))
 			field = field_;
@@ -38,7 +65,7 @@ public class NoticeListController extends HttpServlet{
 		
 		NoticeService service = new NoticeService();
 		
-		List<Notice> list = service.getNoticeList(field, query, page);
+		List<NoticeView> list = service.getNoticeList(field, query, page);
 		//DB에 존재하는 데이터 개수 : count
 		int count = service.getNoticeCount(field, query);
 		
@@ -48,7 +75,9 @@ public class NoticeListController extends HttpServlet{
 		request.setAttribute("count", count);
 		
 		//notice/list.jsp에 넘겨주기
-		request.getRequestDispatcher("/WEB-INF/view/notice/list.jsp")
+		request.getRequestDispatcher("/WEB-INF/view/admin/board/notice/list.jsp")
 		.forward(request, response); //데이터를 가지고 이어서 작성
 	}
+	
+	
 }

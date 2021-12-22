@@ -36,7 +36,7 @@
             <!-- ---------------------------<header>--------------------------------------- -->
 
             <h1 id="logo">
-                <a href="/index.html">
+                <a href="/index">
                     <img src="/images/logo.png" alt="뉴렉처 온라인" />
 
                 </a>
@@ -192,7 +192,7 @@
 					 <c:forEach var="n" items="${list}" begin="0" end="9" varStatus="st">
 					<tr>
 						<td>${n.id}</td>
-						<td class="title indent text-align-left"><a href="detail?id=${n.id}">${n.title}</a></td>
+						<td class="title indent text-align-left"><a href="detail?id=${n.id}">${n.title} ..<span class="text-orange text-strong">[${n.cmtCount}]</span></a></td>
 						<td>${n.writerId}</td>
 						<td><fmt:formatDate value="${n.regdate }" pattern="yyyy-MM-dd"/></td>
 						<td><fmt:formatNumber type="number" value="${n.hit}" /></td>

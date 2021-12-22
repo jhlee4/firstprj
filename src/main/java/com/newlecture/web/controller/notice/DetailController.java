@@ -1,4 +1,4 @@
-package com.newlecture.web.controller;
+package com.newlecture.web.controller.notice;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -18,16 +18,25 @@ import com.newlecture.web.entity.Notice;
 import com.newlecture.web.service.NoticeService;
 
 @WebServlet("/notice/detail")
-public class NoticeDetailController extends HttpServlet {
+public class DetailController extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("id"));
 		
 		NoticeService service = new NoticeService();
 		Notice notice = new Notice();
+		
+		
+		//현재 notice를 위한 notice
 		notice = service.getNotice(id);
-		
-		
 		request.setAttribute("n", notice);
+		
+		
+		Notice notice2 = new Notice();
+		notice2 = service.getPrevNotice(id);
+		if(notice2 !=null) {
+			request.setAttribute("nextN", notice2);
+			//System.out.print(notice2.getId());
+		}
 		
 		request.getRequestDispatcher("/WEB-INF/view/notice/detail.jsp")
 		.forward(request, response); //데이터를 가지고 이어서 작성
