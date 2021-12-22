@@ -38,7 +38,7 @@ public class RegController extends HttpServlet {
 		notice.setWriterId("newlec");
 		
 		NoticeService service = new NoticeService();
-		int result = service.insertNotice(notice);;
+		int result = service.insertNotice(notice);
 		
 		response.sendRedirect("list");
 	}
