@@ -47,7 +47,7 @@ public class ListController extends HttpServlet{
 			System.out.println(oids);
 			System.out.println(cids);
 			
-			service.pubNoticeAll(null);
+			service.pubNoticeAll(oids, cids);
 			break;
 			
 		case "ÀÏ°ý»èÁ¦":
