@@ -1,6 +1,8 @@
 package com.newlecture.web.controller.admin.notice;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.lang.model.element.ModuleElement.RequiresDirective;
@@ -23,23 +25,38 @@ public class ListController extends HttpServlet{
 	// 403 보안오류
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String[] openIds = request.getParameterValues("open-id");
+		String[] openIds = request.getParameterValues("open-id"); //3, 5 , 8 
 		String[] delIds = request.getParameterValues("del-id");
 		String cmd = request.getParameter("cmd");
+		String ids_ = request.getParameter("ids");
+		
+		String[] ids = ids_.trim().split(" ");//1,2,3,4,5,6,7,8,9,10
+		
+		NoticeService service = new NoticeService();
 		
 		switch(cmd) {
 		case "일괄공개":
 			for(String openId : openIds)
 				System.out.printf("open id : %s\n", openId);
+		
+			List<String> oids = Arrays.asList(openIds);
+			
+			List<String> cids = new ArrayList(Arrays.asList(ids));
+			cids.removeAll(oids);
+			System.out.println(Arrays.asList(ids));
+			System.out.println(oids);
+			System.out.println(cids);
+			
+			service.pubNoticeAll(null);
 			break;
 			
 		case "일괄삭제":
-			NoticeService service = new NoticeService();
-			int[] ids = new int[delIds.length];
-			for(int i=0;i<delIds.length ; i++)
-				ids[i] = Integer.parseInt(delIds[i]);
 			
-			int result = service.deleteNoticeAll(ids);
+			int[] ids1 = new int[delIds.length];
+			for(int i=0;i<delIds.length ; i++)
+				ids1[i] = Integer.parseInt(delIds[i]);
+			
+			int result = service.deleteNoticeAll(ids1);
 			break;
 		}
 		

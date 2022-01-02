@@ -20,12 +20,60 @@ public class NoticeService {
 	
 	
 	public int removeNoticeAll(int[] ids){
-	
-		return 0;
-	}
-	public int pubNoticeAll(int[] ids){
 		
 		return 0;
+	}
+	
+	public int pubNoticeAll(int[] oids, int[] cids){
+		
+		List<String> oidsList = new ArrayList<>();
+		for(int i=0; i<oids.length;i++)
+			oidsList.add(String.valueOf(oids[i]));
+		
+		List<String> cidsList = new ArrayList<>();
+		for(int i=0; i<cids.length;i++)
+			oidsList.add(String.valueOf(cids[i]));
+		
+		return pubNoticeAll(oidsList, cidsList);
+	}
+	
+	public int pubNoticeAll(List<String> oids, List<String> cids){
+			
+		String oidsCSV = String.join(",", oids);
+		String cidsCSV = String.join(",", cids);
+		
+		return pubNoticeAll(oidsCSV, cidsCSV);
+	}
+	
+	public int pubNoticeAll(String oidsCSV, String cidsCSV){
+		
+		int result = 0;
+		
+		String sqlOpen = String.format("UPDATE NOTICE SET PUB=1 WHERE ID IN (%s)",oidsCSV);
+		String sqlClose = String.format("UPDATE NOTICE SET PUB=0 WHERE ID IN (%s)",cidsCSV);
+		
+		try {
+			Class.forName(driver);
+			Connection con = DriverManager.getConnection(url,uid,pwd);
+			
+			Statement stOpen = con.createStatement();
+			result += stOpen.executeUpdate(sqlOpen); // i,u,d 에서 사용 변경된 행의 수만큼 반환(int)
+			
+			Statement stClose = con.createStatement();
+			result += stClose.executeUpdate(sqlClose); // i,u,d 에서 사용 변경된 행의 수만큼 반환(int)
+			
+			
+			stOpen.close();
+			stClose.close();
+			con.close();
+			
+				
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return result;
 	}
 	public int insertNotice(Notice notice){
 		int result = 0;
@@ -86,6 +134,66 @@ public class NoticeService {
 				 	"	SELECT ROWNUM NUM, N.* " +
 				 	"	FROM ( SELECT * FROM NOTICE_VIEW where "+field+" LIKE ? ORDER BY REGDATE DESC  ) N ) "+ 
 				 	"	WHERE NUM BETWEEN ? AND ?";
+		 
+				
+		try {
+			Class.forName(driver);
+			Connection con = DriverManager.getConnection(url,uid,pwd);
+			PreparedStatement st = con.prepareStatement(sql); 
+			
+			st.setString(1, "%"+query+"%");//%"+query+"%
+			st.setInt(2, 1+(page-1)*10); 
+			st.setInt(3, page*10);
+			 
+			ResultSet rs = st.executeQuery();
+			
+			while(rs.next()){
+				int id = rs.getInt("ID");
+				String title = rs.getString("TITLE");
+				Date regdate = rs.getDate("REGDATE");
+				String  writerId = rs.getString("WRITER_ID");
+				String hit = rs.getString("HIT");
+				String files = rs.getString("FILES");
+				//String content = rs.getString("CONTENT");
+				int cmtCount = rs.getInt("CMT_COUNT");
+				boolean pub = rs.getBoolean("PUB");
+				
+				NoticeView notice = new NoticeView(
+						id, 
+						title, 
+						regdate, 
+						writerId, 
+						hit, 
+						files, 
+						pub,
+						//content,
+						cmtCount
+						);
+			
+				list.add(notice);
+			}
+			
+			rs.close();
+			st.close();
+			con.close();
+			
+		} catch (ClassNotFoundException | SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return list;
+	}
+	
+	public List<NoticeView> getNoticePubList(String field, String query, int page) {
+		List<NoticeView> list = new ArrayList<>();
+		System.out.print(field + query);
+		
+		
+		 String sql = "	SELECT * FROM ( " + 
+				 	"	SELECT ROWNUM NUM, N.* " +
+				 	"	FROM ( SELECT * FROM NOTICE_VIEW where "+field+" LIKE ? ORDER BY REGDATE DESC  ) N ) "+ 
+				 	"	WHERE PUB=1 AND NUM BETWEEN ? AND ?";
 		 
 				
 		try {
@@ -351,4 +459,5 @@ public class NoticeService {
 		
 		return result;
 	}
+	
 }

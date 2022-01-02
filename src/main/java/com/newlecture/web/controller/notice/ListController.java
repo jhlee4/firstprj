@@ -38,7 +38,7 @@ public class ListController extends HttpServlet{
 		
 		NoticeService service = new NoticeService();
 		
-		List<NoticeView> list = service.getNoticeList(field, query, page);
+		List<NoticeView> list = service.getNoticePubList(field, query, page);
 		//DB에 존재하는 데이터 개수 : count
 		int count = service.getNoticeCount(field, query);
 		
